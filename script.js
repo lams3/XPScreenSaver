@@ -17,11 +17,15 @@ class Ball {
     this.c = c;
     this.r = r;
     this.v = new Point(0, 0);
+    const rc = parseInt(Math.random() * 255);
+    const gc = parseInt(Math.random() * 255);
+    const bc = parseInt(Math.random() * 255);
+    this.color = `rgb(${rc}, ${gc}, ${bc})`;
   }
 
   draw() {
     ctx.beginPath();
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = this.color;
     ctx.arc(this.c.x, this.c.y, this.r, 0, 2 * Math.PI);
     ctx.fill();
   }
@@ -105,8 +109,25 @@ canvas.addEventListener('dblclick', e => {
 
 setInterval(() => {
   for (let i in balls) {
-    if (i === index) continue;
     const pos = new Point(balls[i].c.x + balls[i].v.x, balls[i].c.y + balls[i].v.y);
+    for (let j in balls) {
+      if (i === j) continue;
+      const v = new Point(balls[i].c.x - balls[j].c.x, balls[i].c.y - balls[j].c.y);
+      if (Math.sqrt(v.x * v.x + v.y * v.y) <= (balls[i].r + balls[j].r)) {
+        let rc = parseInt(Math.random() * 255);
+        let gc = parseInt(Math.random() * 255);
+        let bc = parseInt(Math.random() * 255);
+        balls[i].color = `rgb(${rc}, ${gc}, ${bc})`;
+        rc = parseInt(Math.random() * 255);
+        gc = parseInt(Math.random() * 255);
+        bc = parseInt(Math.random() * 255);
+        balls[j].color = `rgb(${rc}, ${gc}, ${bc})`;
+        const bounceDirection = new Point(pos.x - balls[j].c.x, pos.y - balls[j].c.y).normalize();
+        balls[i].v = bounceDirection;
+        balls[j].v = new Point(-bounceDirection.x, -bounceDirection.y);
+      }
+    }
+    if (i === index) continue;
     if (pos.x < 0 || pos.x > canvas.width) {
       balls[i].v.x *= -1;
     } if (pos.y < 0 || pos.y > canvas.height) {
