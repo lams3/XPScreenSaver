@@ -1,4 +1,4 @@
 # XPScreenSaver
 
-*Click to create a new ball
-*Drag to throw
+* Click to create a new ball
+* Drag to throw
